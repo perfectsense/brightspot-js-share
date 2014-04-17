@@ -45,7 +45,6 @@
             var width = 1000;
             var height = 400;
 
-            console.log(plugin.option(share, 'url'));
             
             if (plugin.option(share, 'serivce') === "facebook") {
                     shareUrl = "https://www.facebook.com/dialog/feed?" +
