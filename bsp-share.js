@@ -51,7 +51,7 @@
                             "link="        + plugin.option(share, 'url')           + "&" +
                             "caption="     + plugin.option(share, 'caption')       + "&" +
                             "description=" + plugin.option(share, 'description')   + "&" +
-                            "redirect_uri" + plugin.option(share, 'redirectUrl')   + "&" +
+                            "redirect_uri=" + plugin.option(share, 'redirectUrl')   + "&" +
                             "picture="     + plugin.option(share, 'image');
             }else if (plugin.option(share, 'serivce') === "google") {
                 shareUrl = "https://plus.google.com/share?" +
