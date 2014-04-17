@@ -12,9 +12,9 @@
             "title" : document.title,
             "url" : window.location.origin + window.location.pathname,
             "redirectUrl" : window.location.origin + window.location.pathname,
-            "description" : $("meta[name='description']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='description']").attr('content')) : "",
-            "caption" : $("meta[name='caption']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='caption']").attr('content')) : "",
-            "image" : $("meta[name='og:image']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='og:image']").attr('content')) : "",
+            "description" : $("meta[property='og:description']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:description']").attr('content')) : "",
+            "caption" : $("meta[property='og:caption']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:caption']").attr('content')) : "",
+            "image" : $("meta[property='og:image']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:image']").attr('content')) : "",
             "appId" : "",
             "trackingUrl" : ""
         },
@@ -44,6 +44,8 @@
             var shareUrl;
             var width = 1000;
             var height = 400;
+
+            console.log(plugin.option(share, 'image'));
             
             if (plugin.option(share, 'serivce') === "facebook") {
                     shareUrl = "https://www.facebook.com/dialog/feed?" +
@@ -51,7 +53,7 @@
                             "link="        + plugin.option(share, 'url')           + "&" +
                             "caption="     + plugin.option(share, 'caption')       + "&" +
                             "description=" + plugin.option(share, 'description')   + "&" +
-                            "redirect_uri" + plugin.option(share, 'redirectUrl')   + "&" +
+                            "redirect_uri=" + plugin.option(share, 'redirectUrl')   + "&" +
                             "picture="     + plugin.option(share, 'image');
             }else if (plugin.option(share, 'serivce') === "google") {
                 shareUrl = "https://plus.google.com/share?" +
