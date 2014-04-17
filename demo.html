@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>BrightSpot Share demo</title>
+        <meta property="og:description" content="here's where your page level open graph description would go" />
+        <meta property="og:caption" content="here's where your page level open graph caption would go" />
+        <meta property="og:image" content="spring.png" />
+        <style>
+            .bsp-sharebar div {
+                background: url(sprite.png);
+                margin: 10px 0px;
+            }
+            .bsp-sharebar a {
+                display: block;
+                width: 26px;
+                height: 24px;
+            }
+            .bsp-sharebar .facebookShare {
+                background-position: 0 -53px;
+            }
+            .bsp-sharebar .googleshare {
+                background-position: -30px -27px;
+            }
+            .bsp-sharebar .twitterShare {
+                background-position: 0 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bsp-sharebar vertical" style="position: absolute;">
+            <div class="facebookShare" data-bsp-share data-bsp-share-options='{"serivce":"facebook", "appId":"465934563527107"}'></div>
+            <div class="twitterShare" data-bsp-share data-bsp-share-options='{"serivce":"twitter"}'></div>
+            <div class="googleshare" data-bsp-share data-bsp-share-options='{"serivce":"google"}'></div>
+        </div>
+                
+        <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="bower_components/bsp-utils/bsp-utils.js"></script>
+        <script type="text/javascript" src="bsp-share.js"></script>
+    </body>
+</html>
