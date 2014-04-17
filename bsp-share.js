@@ -11,7 +11,7 @@
             "serivce" : "",
             "title" : document.title,
             "url" : window.location.origin + window.location.pathname,
-            "redirectUrl" : "",
+            "redirectUrl" : window.location.origin + window.location.pathname,
             "description" : $("meta[name='description']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='description']").attr('content')) : "",
             "caption" : $("meta[name='caption']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='caption']").attr('content')) : "",
             "image" : $("meta[name='og:image']").attr('content') !== undefined ? encodeURIComponent($( "meta[name='og:image']").attr('content')) : "",
