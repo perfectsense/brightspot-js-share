@@ -9,7 +9,7 @@
     return bsp_utils.plugin(globals, 'bsp', 'share', {
         '_defaultOptions': {
             "serivce" : "",
-            "title" : document.title,
+            "title" : document.title !== undefined ? encodeURIComponent(document.title) : "",
             "url" : window.location.origin + window.location.pathname,
             "redirectUrl" : window.location.origin + window.location.pathname,
             "description" : $("meta[property='og:description']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:description']").attr('content')) : "",
@@ -25,14 +25,14 @@
                 event.preventDefault();
                 event.stopPropagation(); //fixes twitter widget creating second pop-up
                 bsp_share.share($(this).attr("href"), $(this).attr("data-shareWidth"), $(this).attr("data-shareHeight"));
-                
+
                 var _trackingUrl = plugin.option($(this).parent(),"trackingUrl");
                 if (_trackingUrl) {
                     $.ajax({ url: _trackingUrl});
                 }
             });
         },
-        '_each': function(share) {            
+        '_each': function(share) {
             var plugin = this;
             var $share = $(share);
 
@@ -44,7 +44,7 @@
             var shareUrl;
             var width = 1000;
             var height = 400;
-            
+
             if (plugin.option(share, 'serivce') === "facebook") {
                     shareUrl = "https://www.facebook.com/dialog/feed?" +
                             "app_id="      + plugin.option(share, 'appId')         + "&" +
@@ -57,7 +57,7 @@
                 shareUrl = "https://plus.google.com/share?" +
                            "url=" + plugin.option(share, 'url');
                 width = 600;
-            }else if (plugin.option(share, 'serivce') === "linknedIn") {
+            }else if (plugin.option(share, 'serivce') === "linkedIn") {
                 shareUrl = "https://www.linkedin.com/shareArticle?" +
                         "summary="  + plugin.option(share, 'description')    + "&" +
                         "ro="       + "false"                                + "&" +
