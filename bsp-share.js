@@ -24,7 +24,7 @@
             plugin._on(roots, 'click', '.bsp-share-link', function(event){
                 event.preventDefault();
                 event.stopPropagation(); //fixes twitter widget creating second pop-up
-                bsp_share.share($(this).attr("href"), $(this).attr("data-shareWidth"), $(this).attr("data-shareHeight"));
+                plugin.share($(this).attr("href"), $(this).attr("data-shareWidth"), $(this).attr("data-shareHeight"));
 
                 var _trackingUrl = plugin.option($(this).parent(),"trackingUrl");
                 if (_trackingUrl) {
@@ -79,7 +79,7 @@
             }
 
             if (shareUrl !== undefined) {
-                $share.append(bsp_share.shareTag($share, shareUrl, height, width));
+                $share.append(plugin.shareTag($share, shareUrl, height, width));
             }
         },
         shareTag : function($share, shareUrl, height, width) {
