@@ -8,6 +8,7 @@
     "bsp-utils": ">=1.0.0"
   },
   "homepage": "https://github.com/perfectsense/brightspot-js-share",
+  "keywords": [
     "brightspot",
     "jquery"
   ],
