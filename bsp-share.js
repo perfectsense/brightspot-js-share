@@ -8,7 +8,7 @@
 })(this, function($, bsp_utils, globals) {
     return bsp_utils.plugin(globals, 'bsp', 'share', {
         '_defaultOptions': {
-            "serivce" : "",
+            "service" : "",
             "title" : document.title !== undefined ? encodeURIComponent(document.title) : "",
             "url" : window.location.origin + window.location.pathname,
             "redirectUrl" : window.location.origin + window.location.pathname,
@@ -25,18 +25,18 @@
                 event.preventDefault();
                 event.stopPropagation(); //fixes twitter widget creating second pop-up
                 bsp_share.share($(this).attr("href"), $(this).attr("data-shareWidth"), $(this).attr("data-shareHeight"));
-                
+
                 var _trackingUrl = plugin.option($(this).parent(),"trackingUrl");
                 if (_trackingUrl) {
                     $.ajax({ url: _trackingUrl});
                 }
             });
         },
-        '_each': function(share) {            
+        '_each': function(share) {
             var plugin = this;
             var $share = $(share);
 
-            if (!plugin.option(share, 'serivce')) {
+            if (!plugin.option(share, 'service')) {
                 console.error("Service parameter is missing");
                 return;
             }
@@ -45,8 +45,8 @@
             var width = 1000;
             var height = 400;
 
-            
-            if (plugin.option(share, 'serivce') === "facebook") {
+
+            if (plugin.option(share, 'service') === "facebook") {
                     shareUrl = "https://www.facebook.com/dialog/feed?" +
                             "app_id="      + plugin.option(share, 'appId')         + "&" +
                             "link="        + plugin.option(share, 'url')           + "&" +
@@ -54,25 +54,25 @@
                             "description=" + plugin.option(share, 'description')   + "&" +
                             "redirect_uri=" + plugin.option(share, 'redirectUrl')   + "&" +
                             "picture="     + plugin.option(share, 'image');
-            }else if (plugin.option(share, 'serivce') === "google") {
+            }else if (plugin.option(share, 'service') === "google") {
                 shareUrl = "https://plus.google.com/share?" +
                            "url=" + plugin.option(share, 'url');
                 width = 600;
-            }else if (plugin.option(share, 'serivce') === "linkedIn") {
+            }else if (plugin.option(share, 'service') === "linkedIn") {
                 shareUrl = "https://www.linkedin.com/shareArticle?" +
                         "summary="  + plugin.option(share, 'description')    + "&" +
                         "ro="       + "false"                                + "&" +
                         "title="    + plugin.option(share, 'title')          + "&" +
                         "mini="     + "true"                                 + "&" +
                         "url="      + plugin.option(share, 'url');
-            }else if (plugin.option(share, 'serivce') === "pinterest") {
+            }else if (plugin.option(share, 'service') === "pinterest") {
                 shareUrl = "http://pinterest.com/pin/create/bookmarklet/?" +
                            "url="         + plugin.option(share, 'url')         + "&" +
                            "title="       + plugin.option(share, 'title')       + "&" +
                            "description=" + plugin.option(share, 'description') + "&" +
                            "media="       + plugin.option(share, 'image');
                 width = 750;
-            }else if (plugin.option(share, 'serivce') === "twitter") {
+            }else if (plugin.option(share, 'service') === "twitter") {
                 shareUrl = "https://twitter.com/intent/tweet?" +
                         "original_referer=" + location.href                    + "&" +
                         "text="             + plugin.option(share, 'title')    + "&" +
