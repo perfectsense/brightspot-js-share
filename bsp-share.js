@@ -10,8 +10,8 @@
         '_defaultOptions': {
             "service" : "",
             "title" : document.title !== undefined ? encodeURIComponent(document.title) : "",
-            "url" : window.location.origin + window.location.pathname,
-            "redirectUrl" : window.location.origin + window.location.pathname,
+            "url" : window.location.protocol + "//" + window.location.hostname + window.location.pathname,
+            "redirectUrl" : window.location.protocol + "//" + window.location.hostname + window.location.pathname,
             "description" : $("meta[property='og:description']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:description']").attr('content')) : "",
             "caption" : $("meta[property='og:caption']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:caption']").attr('content')) : "",
             "image" : $("meta[property='og:image']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:image']").attr('content')) : "",
