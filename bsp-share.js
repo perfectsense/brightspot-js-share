@@ -1,102 +1,247 @@
+/**
+ * Default BSP Share Plugin
+ *
+ * This allows you turn some HTML markup into a share bar, utilizing the currently known sharing URLs for the most
+ * popular sharing services. It's customizable, in that you can pass in a custom sharing service, urls,
+ * popup sizes, etc as required.
+ *
+ * The most basic use example is designating a piece of the DOM with some elements that have classes named
+ * for each of the supported services.
+ * 1) You can leave off any services if you do not want those.
+ * 2) You also need to pass in the facebook app id.
+ * 3) The plugin also drops on an icon class for you, so if you are not using the default 'fa' class, you will want to pass in an override
+ *
+ * <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{"iconClass":"icon", "serviceProps":{"facebook":{"appId":"645138725541385"}}}'>
+ *      <div class="bsp-facebook-share"></div>
+ *      <div class="bsp-twitter-share"></div>
+ *      <div class="bsp-google-share"></div>
+ *      <div class="bsp-pinterest-share"></div>
+ *      <div class="bsp-linkedin-share"></div>
+ * </div>
+ *
+ * The plugin allows you to customize just about everything, and below are a couple of examples of share-options that you can pass in
+ *
+ * 1) Instead of using the meta tags, pass in your own title and description
+ *    data-bsp-share-options='{"title": "My Custom Title", "description": "My Custom Description"}'
+ *
+ * 2) Add in a tracking URL to track Google Shares
+ *    data-bsp-share-options='{"serviceProps":{"google":{"trackingUrl":"http://asdf.com"}}}'
+ *
+ * 3) Instead of the default "bsp-service-share" class name, put in your own namespace for the share div classes and links
+ *    ex: <div class="asdf-facebook-share"></div> and your a will be .asdf-share-link if you need to style them
+ *    data-bsp-share-options='{"serviceClassBefore":"asdf-", "sharingClass": "asdf-share-link"}''
+ *
+ */
+
 (function(globals, factory) {
     if (typeof define === 'function' && define.amd) {
-        define([ 'jquery', 'bsp-utils' ], factory);
+        define(['jquery', 'bsp-utils'], factory);
     } else {
         factory(globals.jQuery, globals.bsp_utils, globals);
     }
 
 })(this, function($, bsp_utils, globals) {
-    return bsp_utils.plugin(globals, 'bsp', 'share', {
-        '_defaultOptions': {
-            "service" : "",
-            "title" : document.title !== undefined ? encodeURIComponent(document.title) : "",
-            "url" : window.location.origin + window.location.pathname,
-            "redirectUrl" : window.location.origin + window.location.pathname,
-            "description" : $("meta[property='og:description']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:description']").attr('content')) : "",
-            "caption" : $("meta[property='og:caption']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:caption']").attr('content')) : "",
-            "image" : $("meta[property='og:image']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:image']").attr('content')) : "",
-            "appId" : "",
-            "trackingUrl" : ""
+
+    var module = {
+
+        serviceProps: {
+            'facebook'  : {
+                'baseUrl'       : 'https://www.facebook.com/dialog/feed?',
+                'appId'         : '',
+                'trackingUrl'   : '',
+                'width'         : 1000,
+                'height'        : 400
+            },
+            'google'    : {
+                'baseUrl'       : 'https://plus.google.com/share?',
+                'trackingUrl'   : '',
+                'width'         : 1000,
+                'height'        : 400
+            },
+            'linkedin'  : {
+                'baseUrl'       : 'https://www.linkedin.com/shareArticle?',
+                'trackingUrl'   : '',
+                'width'         : 1000,
+                'height'        : 600
+            },
+            'pinterest' : {
+                'baseUrl'       : 'http://pinterest.com/pin/create/bookmarklet/?',
+                'trackingUrl'   : '',
+                'width'         : 1000,
+                'height'        : 400
+            },
+            'twitter'  : {
+                'baseUrl'       : 'https://twitter.com/intent/tweet?',
+                'trackingUrl'   : '',
+                'width'         : 1000,
+                'height'        : 300
+            }
         },
-        '_init' : function(roots, selectors) {
-            var plugin = this;
 
-            plugin._on(roots, 'click', '.bsp-share-link', function(event){
+        init: function($el, options) {
+
+            var self = this;
+            var serviceProps;
+
+            // pull in the options from the plugin
+            self.$el = $el;
+            self.options = options;
+
+            // we have our own default service props. Pull in the overrides from the plugin, which we then
+            // use to extend our own defaults, to create the final serviceProps object that we use
+            serviceProps = options.serviceProps;
+            options.serviceProps = $.extend(true, self.serviceProps, serviceProps);
+
+            self._createLinks();
+            self._createClickHandler();
+
+        },
+
+        _createLinks: function() {
+            var self = this;
+            var services = self.options.services;
+            var $shareLink;
+            var currentService;
+
+            for (var i = 0; i < services.length; i++) {
+
+                currentService = services[i];
+
+                $shareLink = $('<a>').addClass(self.options.sharingClass)
+                                     .addClass(self.options.iconClass)
+                                     .addClass(self.options.iconClass + '-' + currentService);
+
+                $shareLink.attr('data-shareHeight', self.options.serviceProps[currentService].height);
+                $shareLink.attr('data-shareWidth', self.options.serviceProps[currentService].width);
+                $shareLink.attr('href', self._createShareURL(currentService));
+                $shareLink.attr('target', '_blank');
+                $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
+
+                $shareLink.appendTo(self.$el.find('.' + self.options.serviceClassBefore + currentService + self.options.serviceClassAfter));
+            }
+
+        },
+
+        _createShareURL: function(service) {
+            var self = this;
+            var shareUrl = self.options.serviceProps[service].baseUrl;
+
+            var caption =       encodeURIComponent(self.options.caption);
+            var description =   encodeURIComponent(self.options.description);
+            var image =         encodeURIComponent(self.options.image);
+            var title =         encodeURIComponent(self.options.title);
+
+            var url =           encodeURIComponent(self.options.url);
+            var redirectUrl =   encodeURIComponent(self.options.redirectUrl);
+
+            switch (service) {
+                case 'facebook':
+
+                    shareUrl += 'app_id='       + self.options.serviceProps[service].appId + '&' +
+                                'link='         + url           + '&' +
+                                'caption='      + caption       + '&' +
+                                'description='  + description   + '&' +
+                                'redirect_uri=' + redirectUrl   + '&' +
+                                'picture='      + image;
+                    break;
+
+                case 'google':
+
+                    shareUrl += 'url=' + url;
+                    break;
+
+                case 'linkedin':
+
+                    shareUrl += 'summary='  + description    + '&' +
+                                'ro='       + 'false'        + '&' +
+                                'title='    + title          + '&' +
+                                'mini='     + 'true'         + '&' +
+                                'url='      + url;
+                    break;
+
+                case 'pinterest':
+
+                    shareUrl += 'url='         + url         + '&' +
+                                'title='       + title       + '&' +
+                                'description=' + description + '&' +
+                                'media='       + image;
+                    break;
+
+                case 'twitter':
+
+                    shareUrl += 'original_referer=' + encodeURIComponent(location.href) + '&' +
+                                'text='             + title                             + '&' +
+                                'url='              + url;
+                    break;
+            }
+
+            return shareUrl;
+        },
+
+        _createClickHandler: function() {
+            var self = this;
+
+            self.$el.on('click', '.' + self.options.sharingClass, function(event) {
                 event.preventDefault();
-                event.stopPropagation(); //fixes twitter widget creating second pop-up
-                bsp_share.share($(this).attr("href"), $(this).attr("data-shareWidth"), $(this).attr("data-shareHeight"));
+                event.stopPropagation();
 
-                var _trackingUrl = plugin.option($(this).parent(),"trackingUrl");
-                if (_trackingUrl) {
-                    $.ajax({ url: _trackingUrl});
-                }
+                self._openSharePopup($(this));
+                self._trackShare($(this));
             });
         },
-        '_each': function(share) {
-            var plugin = this;
-            var $share = $(share);
 
-            if (!plugin.option(share, 'service')) {
-                console.error("Service parameter is missing");
-                return;
-            }
+        _openSharePopup: function($link) {
 
-            var shareUrl;
-            var width = 1000;
-            var height = 400;
+            var self = this;
 
-
-            if (plugin.option(share, 'service') === "facebook") {
-                    shareUrl = "https://www.facebook.com/dialog/feed?" +
-                            "app_id="      + plugin.option(share, 'appId')         + "&" +
-                            "link="        + plugin.option(share, 'url')           + "&" +
-                            "caption="     + plugin.option(share, 'caption')       + "&" +
-                            "description=" + plugin.option(share, 'description')   + "&" +
-                            "redirect_uri=" + plugin.option(share, 'redirectUrl')   + "&" +
-                            "picture="     + plugin.option(share, 'image');
-            }else if (plugin.option(share, 'service') === "google") {
-                shareUrl = "https://plus.google.com/share?" +
-                           "url=" + plugin.option(share, 'url');
-                width = 600;
-            }else if (plugin.option(share, 'service') === "linkedIn") {
-                shareUrl = "https://www.linkedin.com/shareArticle?" +
-                        "summary="  + plugin.option(share, 'description')    + "&" +
-                        "ro="       + "false"                                + "&" +
-                        "title="    + plugin.option(share, 'title')          + "&" +
-                        "mini="     + "true"                                 + "&" +
-                        "url="      + plugin.option(share, 'url');
-            }else if (plugin.option(share, 'service') === "pinterest") {
-                shareUrl = "http://pinterest.com/pin/create/bookmarklet/?" +
-                           "url="         + plugin.option(share, 'url')         + "&" +
-                           "title="       + plugin.option(share, 'title')       + "&" +
-                           "description=" + plugin.option(share, 'description') + "&" +
-                           "media="       + plugin.option(share, 'image');
-                width = 750;
-            }else if (plugin.option(share, 'service') === "twitter") {
-                shareUrl = "https://twitter.com/intent/tweet?" +
-                        "original_referer=" + location.href                    + "&" +
-                        "text="             + plugin.option(share, 'title')    + "&" +
-                        "url="              + plugin.option(share, 'url');
-            }
-
-            if (shareUrl !== undefined) {
-                $share.append(bsp_share.shareTag($share, shareUrl, height, width));
-            }
-        },
-        shareTag : function($share, shareUrl, height, width) {
-            var shareLink = document.createElement("a");
-            shareLink.className = "bsp-share-link";
-            shareLink.setAttribute("href", shareUrl);
-            shareLink.setAttribute("target", "_blank");
-            shareLink.setAttribute("data-shareHeight", height);
-            shareLink.setAttribute("data-shareWidth", width);
-            $share.append(shareLink);
-        },
-        share : function (href, width, height) {
+            var width = $link.attr('data-shareWidth');
+            var height = $link.attr('data-shareHeight');
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
 
-            window.open(href, 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
+            window.open($link.attr('href'), 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
+
+        },
+
+        _trackShare: function() {
+            var self = this;
+
+            if (self.options.trackingUrl) {
+                $.ajax({
+                    url: self.options.trackingUrl
+                });
+            }
         }
-    });
+
+    };
+
+    var thePlugin = {
+
+        '_defaultOptions': {
+            'services'           : ['facebook', 'google', 'linkedin', 'pinterest', 'twitter'],
+
+            'caption'            : $('meta[property="og:caption"]').attr('content') || '',
+            'description'        : $('meta[property="og:description"]').attr('content') || '',
+            'image'              : $('meta[property="og:image"]').attr('content') || '',
+            'title'              : document.title || '',
+
+            'url'                : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
+            'redirectUrl'        : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
+
+            'sharingClass'       : 'bsp-share-link',
+            'serviceClassBefore' : 'bsp-',
+            'serviceClassAfter'  : '-share',
+            'sharingText'        : 'Share on',
+            'iconClass'          : 'fa'
+        },
+
+        '_each': function(item) {
+
+            var options = this.option(item);
+            var moduleInstance = Object.create(module);
+            moduleInstance.init($(item), options);
+        }
+    };
+
+    return bsp_utils.plugin(false, 'bsp', 'share', thePlugin);
 });

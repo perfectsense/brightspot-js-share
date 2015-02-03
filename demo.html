@@ -5,39 +5,39 @@
         <meta property="og:caption" content="here's where your page level open graph caption would go" />
         <meta property="og:image" content="http://perfectsense.github.io/brightspot-js-share/sprite.png" />
         <style>
-            .bsp-sharing div {
+            
+            .bsp-share-link {
                 background: url(sprite.png);
-                margin: 10px 0px;
-            }
-            .bsp-sharing a {
                 display: block;
+                margin: 10px 0px;
                 width: 26px;
                 height: 24px;
             }
-            .bsp-sharing .facebook {
+            .bsp-share-link.icon-facebook {
                 background-position: 0 -53px;
             }
-            .bsp-sharing .google {
+            .bsp-share-link.icon-google {
                 background-position: -30px -27px;
             }
-            .bsp-sharing .linkedin {
+            .bsp-share-link.icon-linkedin {
                 background-position: 0 -26px;
             }
-            .bsp-sharing .pinterest {
+            .bsp-share-link.icon-pinterest {
                 background-position: -30px 0;
             }
-            .bsp-sharing .twitter {
+            .bsp-share-link.icon-twitter {
                 background-position: 0 0;
             }
         </style>
     </head>
     <body>
-        <div class="bsp-sharing" style="position: absolute;">
-            <div class="facebook" data-bsp-share data-bsp-share-options='{"service":"facebook", "appId":"645138725541385"}'></div>
-            <div class="twitter" data-bsp-share data-bsp-share-options='{"service":"twitter"}'></div>
-            <div class="google" data-bsp-share data-bsp-share-options='{"service":"google"}'></div>
-            <div class="pinterest" data-bsp-share data-bsp-share-options='{"service":"pinterest"}'></div>
-            <div class="linkedin" data-bsp-share data-bsp-share-options='{"service":"linkedIn"}'></div>
+
+         <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{"iconClass":"icon", "serviceProps":{"facebook":{"appId":"645138725541385"}}}'>
+            <div class="bsp-facebook-share"></div>
+            <div class="bsp-twitter-share"></div>
+            <div class="bsp-google-share"></div>
+            <div class="bsp-pinterest-share"></div>
+            <div class="bsp-linkedin-share"></div>
         </div>
 
         <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
