@@ -97,12 +97,31 @@
 
         },
 
+        /**
+         * Public API to share to a specific service.
+         * This is preferable over someone trying to click on of our links manually if they want to use our plugin vs creating one of their own
+         *
+         * Example:
+         *      var bspShare = $('.bsp-sharing[data-bsp-share]').data('bsp-share'); // pulls in the instance
+         *      bspShare.share('facebook');
+         */
+        share: function(service){
+
+            var self = this;
+            var $serviceLink = self.$el.find('[data-service=' + service + ']');
+
+            self._openSharePopup($serviceLink);
+            self._trackShare($serviceLink);
+
+        },
+
         _createLinks: function() {
             var self = this;
             var services = self.options.services;
             var $shareLink;
             var currentService;
 
+            // we go through the services, and create the actual a elements that will be clicked on by the user
             for (var i = 0; i < services.length; i++) {
 
                 currentService = services[i];
@@ -113,6 +132,7 @@
 
                 $shareLink.attr('data-shareHeight', self.options.serviceProps[currentService].height);
                 $shareLink.attr('data-shareWidth', self.options.serviceProps[currentService].width);
+                $shareLink.attr('data-service', currentService);
                 $shareLink.attr('href', self._createShareURL(currentService));
                 $shareLink.attr('target', '_blank');
                 $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
@@ -134,6 +154,7 @@
             var url =           encodeURIComponent(self.options.url);
             var redirectUrl =   encodeURIComponent(self.options.redirectUrl);
 
+            // each service gets a custom URL based on the options that were passed in
             switch (service) {
                 case 'facebook':
 
@@ -238,8 +259,12 @@
         '_each': function(item) {
 
             var options = this.option(item);
+
             var moduleInstance = Object.create(module);
             moduleInstance.init($(item), options);
+
+            // expose the instance of the module on the item if anyone else needs to use the public API
+            $(item).data('bsp-share', moduleInstance);
         }
     };
 
