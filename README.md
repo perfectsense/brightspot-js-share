@@ -1,14 +1,18 @@
 # Installation
 
+It's recommended that this plugin is used inside of the require/AMD space and using the brightspot-js-grunt task, as demonstrated in the BSP-101 project
+- Pull in via your bower.json. It will be automatically included into your project by brightspot-js-grunt task
+- Add it into your compile.js to have it be included in your JS output
+- Add in your markup. Example: 
 
-Manually:
+<code>
+    <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{serviceProps":{"facebook":{"appId":"645138725541385"}}}'>
+       <div class="bsp-facebook-share"></div>
+       <div class="bsp-twitter-share"></div>
+       <div class="bsp-google-share"></div>
+       <div class="bsp-pinterest-share"></div>
+       <div class="bsp-linkedin-share"></div>
+  </div>
+</code>
 
-- Download [jQuery 1.7.0 or above](http://jquery.com/download/)
-- Download [bsp-utils.js](https://raw.githubusercontent.com/perfectsense/brightspot-js-utils/master/bsp-utils.js) ([repository](https://github.com/perfectsense/brightspot-js-utils))
-- Download [bsp-share.js](https://raw.githubusercontent.com/perfectsense/brightspot-js-share/master/bsp-share.js)
-
-# Usage
-
-[demo](http://perfectsense.github.io/brightspot-js-share/demo.html)
-
-[General Brightspot plugin configuration documentation](https://github.com/perfectsense/brightspot-js-utils/blob/master/PLUGIN.md).
+If you want to use this plugin manualy, the [demo](http://perfectsense.github.io/brightspot-js-share/demo.html) shows you how to do that
