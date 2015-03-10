@@ -46,13 +46,8 @@
             var height = 400;
 
             if (plugin.option(share, 'service') === "facebook") {
-                    shareUrl = "https://www.facebook.com/dialog/feed?" +
-                            "app_id="      + plugin.option(share, 'appId')         + "&" +
-                            "link="        + plugin.option(share, 'url')           + "&" +
-                            "caption="     + plugin.option(share, 'caption')       + "&" +
-                            "description=" + plugin.option(share, 'description')   + "&" +
-                            "redirect_uri=" + plugin.option(share, 'redirectUrl')   + "&" +
-                            "picture="     + plugin.option(share, 'image');
+                    shareUrl = "https://www.facebook.com/sharer/sharer.php?" +
+                            "u=" + plugin.option(share, 'url');
             }else if (plugin.option(share, 'service') === "google") {
                 shareUrl = "https://plus.google.com/share?" +
                            "url=" + plugin.option(share, 'url');
