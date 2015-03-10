@@ -45,32 +45,36 @@
             var width = 1000;
             var height = 400;
 
+            var url_encoded = encodeURIComponent( plugin.option(share, 'url') );
+            var des_encoded = encodeURIComponent( plugin.option(share, 'description') );
+            var ttl_encoded = encodeURIComponent( plugin.option(share, 'title') );
+
             if (plugin.option(share, 'service') === "facebook") {
-                    shareUrl = "https://www.facebook.com/sharer/sharer.php?" +
-                            "u=" + plugin.option(share, 'url');
+                shareUrl = "https://www.facebook.com/sharer/sharer.php?" +
+                            "u=" + url_encoded;
             }else if (plugin.option(share, 'service') === "google") {
                 shareUrl = "https://plus.google.com/share?" +
-                           "url=" + plugin.option(share, 'url');
+                           "url=" + url_encoded;
                 width = 600;
             }else if (plugin.option(share, 'service') === "linkedIn") {
                 shareUrl = "https://www.linkedin.com/shareArticle?" +
-                        "summary="  + plugin.option(share, 'description')    + "&" +
-                        "ro="       + "false"                                + "&" +
-                        "title="    + plugin.option(share, 'title')          + "&" +
-                        "mini="     + "true"                                 + "&" +
-                        "url="      + plugin.option(share, 'url');
+                        "summary="  + des_encoded + "&" +
+                        "ro="       + "false" + "&" +
+                        "title="    + ttl_encoded + "&" +
+                        "mini="     + "true" + "&" +
+                        "url="      + url_encoded;
             }else if (plugin.option(share, 'service') === "pinterest") {
                 shareUrl = "http://pinterest.com/pin/create/bookmarklet/?" +
-                           "url="         + plugin.option(share, 'url')         + "&" +
-                           "title="       + plugin.option(share, 'title')       + "&" +
-                           "description=" + plugin.option(share, 'description') + "&" +
+                           "url="         + url_encoded + "&" +
+                           "title="       + ttl_encoded + "&" +
+                           "description=" + des_encoded + "&" +
                            "media="       + plugin.option(share, 'image');
                 width = 750;
             }else if (plugin.option(share, 'service') === "twitter") {
                 shareUrl = "https://twitter.com/intent/tweet?" +
-                        "original_referer=" + location.href                    + "&" +
-                        "text="             + plugin.option(share, 'title')    + "&" +
-                        "url="              + plugin.option(share, 'url');
+                        "original_referer=" + location.href + "&" +
+                        "text="             + ttl_encoded + "&" +
+                        "url="              + url_encoded;
             }
 
             if (shareUrl !== undefined) {
