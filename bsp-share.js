@@ -9,7 +9,7 @@
     return bsp_utils.plugin(globals, 'bsp', 'share', {
         '_defaultOptions': {
             "service" : "",
-            "title" : document.title !== undefined ? encodeURIComponent(document.title) : "",
+            "title" : document.title !== undefined ? document.title : "",
             "url" : window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname,
             "redirectUrl" : window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname,
             "description" : $("meta[property='og:description']").attr('content') !== undefined ? encodeURIComponent($( "meta[property='og:description']").attr('content')) : "",
