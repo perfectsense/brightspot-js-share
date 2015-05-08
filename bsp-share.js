@@ -65,9 +65,9 @@
                         "url="      + url_encoded;
             }else if (plugin.option(share, 'service') === "pinterest") {
                 shareUrl = "http://pinterest.com/pin/create/bookmarklet/?" +
-                           "url="         + url_encoded + "&" +
-                           "title="       + ttl_encoded + "&" +
-                           "description=" + des_encoded + "&" +
+                           "url="         + plugin.option(share, 'url') + "&" +
+                           "title="       + plugin.option(share, 'title') + "&" +
+                           "description=" + plugin.option(share, 'description') + "&" +
                            "media="       + plugin.option(share, 'image');
                 width = 750;
             }else if (plugin.option(share, 'service') === "twitter") {
