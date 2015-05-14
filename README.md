@@ -7,7 +7,7 @@ It's recommended that this plugin is used inside of the require/AMD space and us
 
 Example:
 
-    <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{serviceProps":{"facebook":{"appId":"645138725541385"}}}'>  
+    <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{"iconClass":"icon", "serviceProps":{"facebook":{"appId":"645138725541385"}}}'>  
         <div class="bsp-facebook-share"></div>   
         <div class="bsp-twitter-share"></div>    
         <div class="bsp-google-share"></div> 
