@@ -32,241 +32,233 @@
  *    data-bsp-share-options='{"serviceClassBefore":"asdf-", "sharingClass": "asdf-share-link"}''
  *
  */
+import $ from 'jquery';
+import { bsp_utils } from 'bsp-utils';
 
-(function(globals, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery', 'bsp-utils'], factory);
-    } else {
-        factory(globals.jQuery, globals.bsp_utils, globals);
+var module = {
+
+    serviceProps: {
+        'facebook'  : {
+            'baseUrl'       : 'https://www.facebook.com/dialog/feed?',
+            'appId'         : '',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 400
+        },
+        'google'    : {
+            'baseUrl'       : 'https://plus.google.com/share?',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 400
+        },
+        'linkedin'  : {
+            'baseUrl'       : 'https://www.linkedin.com/shareArticle?',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 600
+        },
+        'pinterest' : {
+            'baseUrl'       : 'http://pinterest.com/pin/create/bookmarklet/?',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 400
+        },
+        'twitter'  : {
+            'baseUrl'       : 'https://twitter.com/intent/tweet?',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 300
+        }
+    },
+
+    init: function($el, options) {
+
+        var self = this;
+        var serviceProps;
+
+        // pull in the options from the plugin
+        self.$el = $el;
+        self.options = options;
+
+        // we have our own default service props. Pull in the overrides from the plugin, which we then
+        // use to extend our own defaults, to create the final serviceProps object that we use
+        serviceProps = options.serviceProps;
+        options.serviceProps = $.extend(true, self.serviceProps, serviceProps);
+
+        self._createLinks();
+        self._createClickHandler();
+
+    },
+
+    /**
+     * Public API to share to a specific service.
+     * This is preferable over someone trying to click on of our links manually if they want to use our plugin vs creating one of their own
+     *
+     * Example:
+     *      var bspShare = $('.bsp-sharing[data-bsp-share]').data('bsp-share'); // pulls in the instance
+     *      bspShare.share('facebook');
+     */
+    share: function(service){
+
+        var self = this;
+        var $serviceLink = self.$el.find('[data-service=' + service + ']');
+
+        self._openSharePopup($serviceLink);
+        self._trackShare($serviceLink);
+
+    },
+
+    _createLinks: function() {
+        var self = this;
+        var services = self.options.services;
+        var $shareLink;
+        var currentService;
+
+        // we go through the services, and create the actual a elements that will be clicked on by the user
+        for (var i = 0; i < services.length; i++) {
+
+            currentService = services[i];
+
+            $shareLink = $('<a>').addClass(self.options.sharingClass)
+                                 .addClass(self.options.iconClass)
+                                 .addClass(self.options.iconClass + '-' + currentService);
+
+            $shareLink.attr('data-shareHeight', self.options.serviceProps[currentService].height);
+            $shareLink.attr('data-shareWidth', self.options.serviceProps[currentService].width);
+            $shareLink.attr('data-service', currentService);
+            $shareLink.attr('href', self._createShareURL(currentService));
+            $shareLink.attr('target', '_blank');
+            $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
+
+            $shareLink.appendTo(self.$el.find('.' + self.options.serviceClassBefore + currentService + self.options.serviceClassAfter));
+        }
+
+    },
+
+    _createShareURL: function(service) {
+        var self = this;
+        var shareUrl = self.options.serviceProps[service].baseUrl;
+
+        var caption =       encodeURIComponent(self.options.caption);
+        var description =   encodeURIComponent(self.options.description);
+        var image =         encodeURIComponent(self.options.image);
+        var title =         encodeURIComponent(self.options.title);
+
+        var url =           encodeURIComponent(self.options.url);
+        var redirectUrl =   encodeURIComponent(self.options.redirectUrl);
+
+        // each service gets a custom URL based on the options that were passed in
+        switch (service) {
+            case 'facebook':
+
+                shareUrl += 'app_id='       + self.options.serviceProps[service].appId + '&' +
+                            'link='         + url           + '&' +
+                            'caption='      + caption       + '&' +
+                            'description='  + description   + '&' +
+                            'redirect_uri=' + redirectUrl   + '&' +
+                            'picture='      + image;
+                break;
+
+            case 'google':
+
+                shareUrl += 'url=' + url;
+                break;
+
+            case 'linkedin':
+
+                shareUrl += 'summary='  + description    + '&' +
+                            'ro='       + 'false'        + '&' +
+                            'title='    + title          + '&' +
+                            'mini='     + 'true'         + '&' +
+                            'url='      + url;
+                break;
+
+            case 'pinterest':
+
+                shareUrl += 'url='         + url         + '&' +
+                            'title='       + title       + '&' +
+                            'description=' + description + '&' +
+                            'media='       + image;
+                break;
+
+            case 'twitter':
+
+                shareUrl += 'original_referer=' + encodeURIComponent(location.href) + '&' +
+                            'text='             + title                             + '&' +
+                            'url='              + url;
+                break;
+        }
+
+        return shareUrl;
+    },
+
+    _createClickHandler: function() {
+        var self = this;
+
+        self.$el.on('click', '.' + self.options.sharingClass, function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            self._openSharePopup($(this));
+            self._trackShare($(this));
+        });
+    },
+
+    _openSharePopup: function($link) {
+
+        var self = this;
+
+        var width = $link.attr('data-shareWidth');
+        var height = $link.attr('data-shareHeight');
+        var left = (screen.width/2)-(width/2);
+        var top = (screen.height/2)-(height/2);
+
+        window.open($link.attr('href'), 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
+
+    },
+
+    _trackShare: function() {
+        var self = this;
+
+        if (self.options.trackingUrl) {
+            $.ajax({
+                url: self.options.trackingUrl
+            });
+        }
     }
 
-})(this, function($, bsp_utils, globals) {
+};
 
-    var module = {
+var thePlugin = {
 
-        serviceProps: {
-            'facebook'  : {
-                'baseUrl'       : 'https://www.facebook.com/dialog/feed?',
-                'appId'         : '',
-                'trackingUrl'   : '',
-                'width'         : 1000,
-                'height'        : 400
-            },
-            'google'    : {
-                'baseUrl'       : 'https://plus.google.com/share?',
-                'trackingUrl'   : '',
-                'width'         : 1000,
-                'height'        : 400
-            },
-            'linkedin'  : {
-                'baseUrl'       : 'https://www.linkedin.com/shareArticle?',
-                'trackingUrl'   : '',
-                'width'         : 1000,
-                'height'        : 600
-            },
-            'pinterest' : {
-                'baseUrl'       : 'http://pinterest.com/pin/create/bookmarklet/?',
-                'trackingUrl'   : '',
-                'width'         : 1000,
-                'height'        : 400
-            },
-            'twitter'  : {
-                'baseUrl'       : 'https://twitter.com/intent/tweet?',
-                'trackingUrl'   : '',
-                'width'         : 1000,
-                'height'        : 300
-            }
-        },
+    '_defaultOptions': {
+        'services'           : ['facebook', 'google', 'linkedin', 'pinterest', 'twitter'],
 
-        init: function($el, options) {
+        'caption'            : $('meta[property="og:caption"]').attr('content') || '',
+        'description'        : $('meta[property="og:description"]').attr('content') || '',
+        'image'              : $('meta[property="og:image"]').attr('content') || '',
+        'title'              : document.title || '',
 
-            var self = this;
-            var serviceProps;
+        'url'                : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
+        'redirectUrl'        : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
 
-            // pull in the options from the plugin
-            self.$el = $el;
-            self.options = options;
+        'sharingClass'       : 'bsp-share-link',
+        'serviceClassBefore' : 'bsp-',
+        'serviceClassAfter'  : '-share',
+        'sharingText'        : 'Share on',
+        'iconClass'          : 'fa'
+    },
 
-            // we have our own default service props. Pull in the overrides from the plugin, which we then
-            // use to extend our own defaults, to create the final serviceProps object that we use
-            serviceProps = options.serviceProps;
-            options.serviceProps = $.extend(true, self.serviceProps, serviceProps);
+    '_each': function(item) {
 
-            self._createLinks();
-            self._createClickHandler();
+        var options = this.option(item);
 
-        },
+        var moduleInstance = Object.create(module);
+        moduleInstance.init($(item), options);
 
-        /**
-         * Public API to share to a specific service.
-         * This is preferable over someone trying to click on of our links manually if they want to use our plugin vs creating one of their own
-         *
-         * Example:
-         *      var bspShare = $('.bsp-sharing[data-bsp-share]').data('bsp-share'); // pulls in the instance
-         *      bspShare.share('facebook');
-         */
-        share: function(service){
+        // expose the instance of the module on the item if anyone else needs to use the public API
+        $(item).data('bsp-share', moduleInstance);
+    }
+};
 
-            var self = this;
-            var $serviceLink = self.$el.find('[data-service=' + service + ']');
-
-            self._openSharePopup($serviceLink);
-            self._trackShare($serviceLink);
-
-        },
-
-        _createLinks: function() {
-            var self = this;
-            var services = self.options.services;
-            var $shareLink;
-            var currentService;
-
-            // we go through the services, and create the actual a elements that will be clicked on by the user
-            for (var i = 0; i < services.length; i++) {
-
-                currentService = services[i];
-
-                $shareLink = $('<a>').addClass(self.options.sharingClass)
-                                     .addClass(self.options.iconClass)
-                                     .addClass(self.options.iconClass + '-' + currentService);
-
-                $shareLink.attr('data-shareHeight', self.options.serviceProps[currentService].height);
-                $shareLink.attr('data-shareWidth', self.options.serviceProps[currentService].width);
-                $shareLink.attr('data-service', currentService);
-                $shareLink.attr('href', self._createShareURL(currentService));
-                $shareLink.attr('target', '_blank');
-                $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
-
-                $shareLink.appendTo(self.$el.find('.' + self.options.serviceClassBefore + currentService + self.options.serviceClassAfter));
-            }
-
-        },
-
-        _createShareURL: function(service) {
-            var self = this;
-            var shareUrl = self.options.serviceProps[service].baseUrl;
-
-            var caption =       encodeURIComponent(self.options.caption);
-            var description =   encodeURIComponent(self.options.description);
-            var image =         encodeURIComponent(self.options.image);
-            var title =         encodeURIComponent(self.options.title);
-
-            var url =           encodeURIComponent(self.options.url);
-            var redirectUrl =   encodeURIComponent(self.options.redirectUrl);
-
-            // each service gets a custom URL based on the options that were passed in
-            switch (service) {
-                case 'facebook':
-
-                    shareUrl += 'app_id='       + self.options.serviceProps[service].appId + '&' +
-                                'link='         + url           + '&' +
-                                'caption='      + caption       + '&' +
-                                'description='  + description   + '&' +
-                                'redirect_uri=' + redirectUrl   + '&' +
-                                'picture='      + image;
-                    break;
-
-                case 'google':
-
-                    shareUrl += 'url=' + url;
-                    break;
-
-                case 'linkedin':
-
-                    shareUrl += 'summary='  + description    + '&' +
-                                'ro='       + 'false'        + '&' +
-                                'title='    + title          + '&' +
-                                'mini='     + 'true'         + '&' +
-                                'url='      + url;
-                    break;
-
-                case 'pinterest':
-
-                    shareUrl += 'url='         + url         + '&' +
-                                'title='       + title       + '&' +
-                                'description=' + description + '&' +
-                                'media='       + image;
-                    break;
-
-                case 'twitter':
-
-                    shareUrl += 'original_referer=' + encodeURIComponent(location.href) + '&' +
-                                'text='             + title                             + '&' +
-                                'url='              + url;
-                    break;
-            }
-
-            return shareUrl;
-        },
-
-        _createClickHandler: function() {
-            var self = this;
-
-            self.$el.on('click', '.' + self.options.sharingClass, function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                self._openSharePopup($(this));
-                self._trackShare($(this));
-            });
-        },
-
-        _openSharePopup: function($link) {
-
-            var self = this;
-
-            var width = $link.attr('data-shareWidth');
-            var height = $link.attr('data-shareHeight');
-            var left = (screen.width/2)-(width/2);
-            var top = (screen.height/2)-(height/2);
-
-            window.open($link.attr('href'), 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
-
-        },
-
-        _trackShare: function() {
-            var self = this;
-
-            if (self.options.trackingUrl) {
-                $.ajax({
-                    url: self.options.trackingUrl
-                });
-            }
-        }
-
-    };
-
-    var thePlugin = {
-
-        '_defaultOptions': {
-            'services'           : ['facebook', 'google', 'linkedin', 'pinterest', 'twitter'],
-
-            'caption'            : $('meta[property="og:caption"]').attr('content') || '',
-            'description'        : $('meta[property="og:description"]').attr('content') || '',
-            'image'              : $('meta[property="og:image"]').attr('content') || '',
-            'title'              : document.title || '',
-
-            'url'                : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
-            'redirectUrl'        : window.location.protocol + '//' + window.location.hostname + window.location.pathname,
-
-            'sharingClass'       : 'bsp-share-link',
-            'serviceClassBefore' : 'bsp-',
-            'serviceClassAfter'  : '-share',
-            'sharingText'        : 'Share on',
-            'iconClass'          : 'fa'
-        },
-
-        '_each': function(item) {
-
-            var options = this.option(item);
-
-            var moduleInstance = Object.create(module);
-            moduleInstance.init($(item), options);
-
-            // expose the instance of the module on the item if anyone else needs to use the public API
-            $(item).data('bsp-share', moduleInstance);
-        }
-    };
-
-    return bsp_utils.plugin(false, 'bsp', 'share', thePlugin);
-});
+export default bsp_utils.plugin(false, 'bsp', 'share', thePlugin);
