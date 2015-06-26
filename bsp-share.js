@@ -33,7 +33,7 @@
  *
  */
 import $ from 'jquery';
-import { bsp_utils } from 'bsp-utils';
+import bsp_utils from 'bsp-utils';
 
 var module = {
 
