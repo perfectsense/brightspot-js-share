@@ -1,5 +1,7 @@
 # Installation
 
+NOTE: Starting with 3.0.0, bsp-share is an [ECMAScript 6 module](http://www.2ality.com/2014/09/es6-modules-final.html) instead of a [RequireJS module](http://requirejs.org/). If you need an AMD version, work in the 2.x.x branch.
+
 It's recommended that this plugin is used inside of the require/AMD space and using the brightspot-js-grunt task, as demonstrated in the BSP-101 project
 - Pull in via your bower.json. It will be automatically included into your project by brightspot-js-grunt task
 - Add it into your compile.js to have it be included in your JS output
