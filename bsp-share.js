@@ -94,7 +94,10 @@
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
 
-            window.open(href, 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
+            var shareWindow = window.open(href, 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
+        
+            shareWindow.focus();
+            
         }
     });
 });
