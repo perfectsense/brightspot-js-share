@@ -93,11 +93,9 @@
         share : function (href, width, height) {
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
-
-            var shareWindow = window.open(href, 'share', 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
-        
+            var temp = (new Date()).getTime();
+            var shareWindow = window.open(href, '_new_'+temp, 'width='+width+', height='+height+', top='+top+', left=' + left + ' toolbar=1, resizable=0');
             shareWindow.focus();
-            
         }
     });
 });
