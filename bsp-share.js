@@ -63,6 +63,12 @@ var module = {
             'width'         : 1000,
             'height'        : 400
         },
+        'tumblr'  : {
+            'baseUrl'       : 'https://www.tumblr.com/share?',
+            'trackingUrl'   : '',
+            'width'         : 1000,
+            'height'        : 400
+        },
         'twitter'  : {
             'baseUrl'       : 'https://twitter.com/intent/tweet?',
             'trackingUrl'   : '',
@@ -181,6 +187,12 @@ var module = {
                             'media='       + image;
                 break;
 
+            case 'tumblr':
+
+                shareUrl += 'v=3&u=' + url + '&' +
+                            't='     + title;
+                break;
+
             case 'twitter':
 
                 shareUrl += 'original_referer=' + encodeURIComponent(location.href) + '&' +
@@ -232,7 +244,7 @@ var module = {
 var thePlugin = {
 
     '_defaultOptions': {
-        'services'           : ['facebook', 'google', 'linkedin', 'pinterest', 'twitter'],
+        'services'           : ['facebook', 'google', 'linkedin', 'pinterest', 'tumblr', 'twitter'],
 
         'caption'            : $('meta[property="og:caption"]').attr('content') || '',
         'description'        : $('meta[property="og:description"]').attr('content') || '',
