@@ -142,16 +142,16 @@ var module = {
     },
 
     _createShareURL: function(service) {
-        var self = this;
-        var shareUrl = self.options.serviceProps[service].baseUrl;
+        let self = this;
+        let serviceProps = self.options.serviceProps[service];
+        let shareUrl = self.options.serviceProps[service].baseUrl;
 
-        var caption =       encodeURIComponent(self.options.caption);
-        var description =   encodeURIComponent(self.options.description);
-        var image =         encodeURIComponent(self.options.image);
-        var title =         encodeURIComponent(self.options.title);
-
-        var url =           encodeURIComponent(self.options.url);
-        var redirectUrl =   encodeURIComponent(self.options.redirectUrl);
+        let caption =       encodeURIComponent(serviceProps.caption || self.options.caption);
+        let description =   encodeURIComponent(serviceProps.description || self.options.description);
+        let image =         encodeURIComponent(self.options.image);
+        let title =         encodeURIComponent(serviceProps.title || self.options.title);
+        let url =           encodeURIComponent(self.options.url);
+        let redirectUrl =   encodeURIComponent(self.options.redirectUrl);
 
         // each service gets a custom URL based on the options that were passed in
         switch (service) {
