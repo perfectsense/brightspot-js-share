@@ -43,37 +43,43 @@ var module = {
             'appId'         : '',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'google'    : {
             'baseUrl'       : 'https://plus.google.com/share?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'linkedin'  : {
             'baseUrl'       : 'https://www.linkedin.com/shareArticle?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 600
+            'height'        : 600,
+            'linkText'      : ''
         },
         'pinterest' : {
             'baseUrl'       : 'http://pinterest.com/pin/create/bookmarklet/?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'tumblr'  : {
             'baseUrl'       : 'https://www.tumblr.com/share?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'twitter'  : {
             'baseUrl'       : 'https://twitter.com/intent/tweet?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 300
+            'height'        : 300,
+            'linkText'      : ''
         }
     },
 
@@ -135,6 +141,7 @@ var module = {
             $shareLink.attr('href', self._createShareURL(currentService));
             $shareLink.attr('target', '_blank');
             $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
+            $shareLink.html(self.options.serviceProps[currentService].linkText);
 
             $shareLink.appendTo(self.$el.find('.' + self.options.serviceClassBefore + currentService + self.options.serviceClassAfter));
         }
