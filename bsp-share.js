@@ -10,6 +10,7 @@
  * 1) You can leave off any services if you do not want those.
  * 2) You also need to pass in the facebook app id.
  * 3) The plugin also drops on an icon class for you, so if you are not using the default 'fa' class, you will want to pass in an override
+ * 4) Lastly, if you need link text vs just an icon, you can pass in an optional linkText in each of the serviceProps throught the data-bsp-share-options pattern
  *
  * <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{"iconClass":"icon", "serviceProps":{"facebook":{"appId":"645138725541385"}}}'>
  *      <div class="bsp-facebook-share"></div>
