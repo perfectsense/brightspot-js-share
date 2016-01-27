@@ -10,6 +10,7 @@
  * 1) You can leave off any services if you do not want those.
  * 2) You also need to pass in the facebook app id.
  * 3) The plugin also drops on an icon class for you, so if you are not using the default 'fa' class, you will want to pass in an override
+ * 4) Lastly, if you need link text vs just an icon, you can pass in an optional linkText in each of the serviceProps throught the data-bsp-share-options pattern
  *
  * <div class="bsp-sharing" data-bsp-share data-bsp-share-options='{"iconClass":"icon", "serviceProps":{"facebook":{"appId":"645138725541385"}}}'>
  *      <div class="bsp-facebook-share"></div>
@@ -43,37 +44,43 @@ var module = {
             'appId'         : '',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'google'    : {
             'baseUrl'       : 'https://plus.google.com/share?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'linkedin'  : {
             'baseUrl'       : 'https://www.linkedin.com/shareArticle?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 600
+            'height'        : 600,
+            'linkText'      : ''
         },
         'pinterest' : {
             'baseUrl'       : 'http://pinterest.com/pin/create/bookmarklet/?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'tumblr'  : {
             'baseUrl'       : 'https://www.tumblr.com/share?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 400
+            'height'        : 400,
+            'linkText'      : ''
         },
         'twitter'  : {
             'baseUrl'       : 'https://twitter.com/intent/tweet?',
             'trackingUrl'   : '',
             'width'         : 1000,
-            'height'        : 300
+            'height'        : 300,
+            'linkText'      : ''
         }
     },
 
@@ -135,6 +142,7 @@ var module = {
             $shareLink.attr('href', self._createShareURL(currentService));
             $shareLink.attr('target', '_blank');
             $shareLink.attr('title', self.options.sharingText + ' ' + currentService);
+            $shareLink.html(self.options.serviceProps[currentService].linkText);
 
             $shareLink.appendTo(self.$el.find('.' + self.options.serviceClassBefore + currentService + self.options.serviceClassAfter));
         }
