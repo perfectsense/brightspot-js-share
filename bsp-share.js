@@ -169,7 +169,9 @@ var module = {
                             'link='         + url           + '&' +
                             'caption='      + caption       + '&' +
                             'description='  + description   + '&' +
-                            'redirect_uri=' + redirectUrl   + '&' +
+                            // this prevents facebook's popup from also showing the shared page
+                            // and staying open w/ that 2nd instance ...
+                            // 'redirect_uri=' + redirectUrl   + '&' +
                             'picture='      + image;
                 break;
 
